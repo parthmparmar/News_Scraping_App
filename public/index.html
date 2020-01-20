@@ -35,27 +35,62 @@
 
     <div class="jumbotron jumbotron-fluid text-center">
         <div class="container">
-          <h1 class="display-4 mb-4">Planet Money - Podcast Reviews</h1>
-          <img src="https://media.npr.org/assets/img/2018/08/02/npr_planetmoney_podcasttile_sq-7b7fab0b52fd72826936c3dbe51cff94889797a0.jpg?s=300" alt="Planet Money Logo">
+            <h1 class="display-4 mb-4">Planet Money - Podcast Reviews</h1>
+            <img src="https://media.npr.org/assets/img/2018/08/02/npr_planetmoney_podcasttile_sq-7b7fab0b52fd72826936c3dbe51cff94889797a0.jpg?s=300"
+                alt="Planet Money Logo">
         </div>
-      </div>
+    </div>
     <div class="container">
         <div class="row">
             <h3>Podcasts</h3>
         </div>
         <div class="row">
             <div class="podcasts col-md-12">
-                <div class="card master">
+                <div class="card mb-2 master d-none">
                     <h5 class="card-header">Title</h5>
                     <div class="card-body">
-                      <h5 class="card-title">By</h5>
-                      <p class="card-text">Description</p>
-                      <a href="#" class="btn btn-primary">Link to Podcast</a>
-                      <a href="#" class="btn btn-primary">Save Podcast</a>
+                        <p class="card-text description">Description</p>
+                        <a href="#" class="btn btn-primary link">Link to Podcast</a>
+                        <a class="btn btn-primary note" data-toggle="modal" data-target=".modal">Add Note</a>
                     </div>
-                  </div>
+                </div>
             </div>
         </div>
+    </div>
+
+    <!-- model -->
+    <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eModalLabel">New Note</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <h3 class="podcast-title">Title</h3>
+                        <div class="form-group">
+                            <label for="note-title" class="col-form-label">Note Title:</label>
+                            <textarea class="form-control" id="note-title"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="note-text" class="col-form-label">Note:</label>
+                            <textarea class="form-control" id="note-text"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary add-note">Add Note</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- alert -->
+    <div class="alert alert-warning" role="alert">
+        Note cannot be empty, try again!
     </div>
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
         integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
@@ -66,6 +101,8 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
         integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
         crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="app.js"></script>
 </body>
 
 </html>

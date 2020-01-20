@@ -1,41 +1,48 @@
 
 var express = require("express");
-// var mongojs = require("mongojs");
+var logger = require("morgan");
+var mongoose = require("mongoose");
 
+// Our scraping tools
+// Axios is a promised-based http library, similar to jQuery's Ajax method
+// It works on the client and on the server
 var axios = require("axios");
 var cheerio = require("cheerio");
 
+// Require all models
+var db = require("./models");
+
+var PORT = 3000;
+
+// Initialize Express
 var app = express();
 
-// Database configuration
-// var databaseUrl = "scraper";
-// var collections = ["scrapedData"];
+// Configure middleware
 
-// Hook mongojs configuration to the db variable
-// var db = mongojs(databaseUrl, collections);
-// db.on("error", function(error) {
-//   console.log("Database Error:", error);
-// });
+// Use morgan logger for logging requests
+app.use(logger("dev"));
+// Parse request body as JSON
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+// Make public a static folder
+app.use(express.static("public"));
 
+// Connect to the Mongo DB
+mongoose.connect("mongodb://localhost/homework18Podcast", { useNewUrlParser: true });
+
+// Routes
+
+// Home
 app.get("/", function(req, res) {
   res.send("Hello world");
 });
 
-// app.get("/all", function(req, res){
-//   db.scrapedData.find({}, function(err, data){
-//     if (err){
-//       console.log(err);
-//     }
-//     else{
-//     res.json(data);
-//     }
-//   });
-  
-// });
-
+// Scrap Route
 app.get("/find", function(req, res){
-//   db.scrapedData.remove({});
 
+  db.Podcast.remove({}, function(data){
+    console.log(data);
+  });
   axios.get("https://www.npr.org/sections/money/").then(function(response) {
   var $ = cheerio.load(response.data);
   var result = {};
@@ -53,12 +60,49 @@ app.get("/find", function(req, res){
       link: link,
       imageLink: imageLink
     };
-    console.log(result)
-    // db.scrapedData.insert(result)
-  });
-  res.redirect("/all");
-  });
   
+    db.Podcast.create(result)
+    .then(function(dbPodcast){
+      console.log(dbPodcast);
+    }).catch(function(err){
+      console.log(err);
+    });
+
+  });
+  res.send("Podcast Found!")
+  });
+});
+
+// All Podcast Route
+app.get("/podcasts", function(req, res){
+  db.Podcast.find({}).then(function(dbPodcasts){
+    res.json(dbPodcasts);
+  }).catch(function(err){
+    console.log(err);
+  });
+});
+
+// add Note 
+
+app.post("/note/:id", function(req, res){
+  var id = req.params.id;
+
+  db.Notes.create(req.body).then(function(dbNote){
+    return db.Podcast.findByIdAndUpdate({_id:id}, {note : dbNote._id}, {new: true});
+  }).then(function(dbPodcast){
+    res.json(dbPodcast);
+  }).catch(function(err){
+    console.log(err);
+  });
+
+});
+
+app.get("/notes", function(req, res){
+  db.Notes.find({}).then(function(dbNotes){
+    res.json(dbNotes);
+  }).catch(function(err){
+    console.log(err);
+  });
 });
 
 // Listen on port 3000
