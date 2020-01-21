@@ -1,6 +1,7 @@
 
 module.exports = {
     Podcast: require("./podcasts"),
-    Notes: require("./notes")
+    Notes: require("./notes"),
+    Saved: require("./saved")
   };
   

@@ -40,38 +40,62 @@ app.get("/", function(req, res) {
 // Scrap Route
 app.get("/find", function(req, res){
 
-  db.Podcast.remove({}, function(data){
-    console.log(data);
-  });
+  // db.Podcast.remove({}, function(data){
+  // });
   axios.get("https://www.npr.org/sections/money/").then(function(response) {
   var $ = cheerio.load(response.data);
-  var result = {};
-
+  var podcastsArray = [];
   $("article.item").each(function(i, element) {
 
     var title = $(element).find(".title").text();
     var description = $(element).find(".teaser").text();
     var link = $(element).find(".title").children("a").attr("href");
     var imageLink = $(element).find("img").attr("src");
-
+    
     result = {
       title: title,
       description: description,
       link: link,
       imageLink: imageLink
     };
-  
-    db.Podcast.create(result)
-    .then(function(dbPodcast){
-      console.log(dbPodcast);
-    }).catch(function(err){
-      console.log(err);
-    });
+    podcastsArray.push(result);
+    console.log(result);
+    // db.Podcast.findOne({title: title}).then(function(results){
+    //   if(results == null){
+    //     // console.log(result);
+    //     db.Podcast.create(result)
+    //     .then(function(dbPodcast){
+    //       // console.log(dbPodcast);
+    //     }).catch(function(err){
+    //       console.log(err);
+    //     });
+    //   };
+    // });
 
   });
+  addDB(podcastsArray);
   res.send("Podcast Found!")
   });
 });
+
+function addDB(array){
+  array.forEach(element => {
+
+    db.Podcast.findOne({title: element.title}).then(function(results){
+      if(results == null){
+        // console.log(result);
+        db.Podcast.create(result)
+        .then(function(dbPodcast){
+          // console.log(dbPodcast);
+        }).catch(function(err){
+          console.log(err);
+        });
+      };
+    }).catch(function(err){
+      console.log(err);
+    });
+  });
+}
 
 // All Podcast Route
 app.get("/podcasts", function(req, res){
@@ -97,6 +121,64 @@ app.post("/note/:id", function(req, res){
 
 });
 
+app.get("/note/:id", function(req, res){
+  var id = req.params.id;
+  console.log("id: " + id);
+  db.Notes.findById(id).then(function(dbNote){
+    res.json(dbNote);
+  }).catch(function(err){
+    console.log(err);
+  });
+});
+
+app.delete("/note/:id", function(req, res){
+  var id = req.params.id;
+  console.log("id: " + id);
+  db.Notes.findByIdAndDelete(id).then(function(dbNote){
+    res.json(dbNote);
+  }).catch(function(err){
+    console.log(err);
+  });
+});
+
+app.post("/save/:id", function(req, res){
+  var id = {podcastId: req.params.id};
+
+  db.Saved.find(id).then(function(results){
+    if (results == ""){
+      db.Saved.create(id).then(function(dbSaved){
+        res.json(dbSaved);
+      }).catch(function(err){
+        console.log(err);
+      });
+    }
+    else{
+      res.send("Already Saved");
+    }
+  }).catch(function(err){
+    console.log("err");
+  });
+});
+
+
+app.post("/remove/:id", function(req, res){
+  var id = req.params.id;
+
+  db.Saved.findByIdAndDelete(id).then(function(results){
+    console.log(results);
+  }).catch(function(err){
+    console.log("err");
+  });
+});
+
+app.get("/saved", function(req, res){
+  db.Saved.find({}).populate("podcastId").then(function(dbSaved){
+  res.json(dbSaved);
+  }).catch(function(err){
+    console.log(err);
+  });
+});
+
 app.get("/notes", function(req, res){
   db.Notes.find({}).then(function(dbNotes){
     res.json(dbNotes);
@@ -104,6 +186,7 @@ app.get("/notes", function(req, res){
     console.log(err);
   });
 });
+
 
 // Listen on port 3000
 app.listen(3000, function() {
