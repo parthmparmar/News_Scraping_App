@@ -1,64 +1,22 @@
 
 $(document).ready(function(){
 
-    if(window.location.pathname == "/"){
+    if(window.location.pathname == "/mypodcasts"){
+        $("#home").removeClass("active");
+        $("#mypodcasts").addClass("active");
+    };
 
-        $.ajax({
-            url: "/podcasts",
-            type: "GET"
-        }).then(function(response){
-            console.log(response);
-            makeCards(response);
-
-        });
-    }
-    else if (window.location.pathname == "/saved.html"){
-        $.ajax({
-            url: "/saved",
-            type: "GET"
-        }).then(function(response){
-            console.log(response);
-            if (response.length == 0){
-                console.log("No Articles Saved");
-                $(".no-podcast").removeClass("d-none");
-            }
-            else{
-                makeCardsSaved(response);
-            };
-        });
-    }
 });
 
-
-function makeCards(data){
-    data.forEach(element => {
-        var newCard = $(".master").clone(true);
-        newCard.removeClass("master d-none");
-        newCard.find(".card-header").text(element.title);
-        newCard.find(".description").text(element.description);
-        newCard.find(".link").attr("href", element.link);
-        newCard.find(".note").attr("data-id", element._id);
-        newCard.find(".note").attr("data-title", element.title);
-        newCard.find(".note").attr("data-note", element.note)
-        newCard.find(".save").attr("data-id", element._id);
-        newCard.appendTo(".podcasts");
+$(".scrap").on("click", function(){
+    $.ajax({
+        url: "/find",
+        type:"GET"
+    }).then(function(response){
+        location.reload();
     });
-};
+});
 
-function makeCardsSaved(data){
-    data.forEach(element => {
-        var newCard = $(".master").clone(true);
-        newCard.removeClass("master d-none");
-        newCard.find(".card-header").text(element.podcastId.title);
-        newCard.find(".description").text(element.podcastId.description);
-        newCard.find(".link").attr("href", element.podcastId.link);
-        newCard.find(".note").attr("data-id", element.podcastId._id);
-        newCard.find(".note").attr("data-title", element.podcastId.title);
-        newCard.find(".note").attr("data-note", element.podcastId.note);
-        newCard.find(".remove").attr("data-id", element._id);
-        newCard.appendTo(".podcasts");
-    });
-};
 
 $(".note").on("click", function(){
    $(".add-note").attr("data-id",$(this).data("id"));

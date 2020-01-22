@@ -38,7 +38,7 @@ mongoose.connect("mongodb://localhost/homework18Podcast", { useNewUrlParser: tru
 // Routes
 
 // Home
-app.get("/", function(req, res) {
+app.get("/hello-world", function(req, res) {
   res.send("Hello world");
 });
 
@@ -167,7 +167,7 @@ app.get("/notes", function(req, res){
   });
 });
 
-app.get("/home", function(req, res){
+app.get("/", function(req, res){
   db.Podcast.find({}).then(function(dbPodcasts){
     res.render("index", {podcasts: dbPodcasts});
   }).catch(function(err){
