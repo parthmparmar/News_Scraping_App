@@ -12,6 +12,7 @@ The app is uses Node JS (with express) to run the server side code, with a mongo
     - uses express to launch app and handles all route request from client side
     - connect mongoDB to the app using mongoose 
     - defines express-handlebars settings to use as a template engine
+    - uses cheerio and axios to get html content of a webpage and scrap of specific info about the podcasts
 
 - **NPM packages** -- package.json
     - houses app info and required packages (useful for new install and run on servers)
