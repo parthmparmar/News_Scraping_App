@@ -1,0 +1,16 @@
+
+{{#unless podcasts.length}}
+<h4 class ="text-warning"> -- No Podcast Found, Please Scrap New Podcasts</h4>
+{{/unless}}
+
+{{#each podcasts}}
+<div class="card mb-2">
+    <h5 class="card-header">{{this.title}}</h5>
+    <div class="card-body">
+        <p class="card-text description">{{this.description}}</p>
+        <a href="{{this.link}}" class="btn btn-secondary">Link to Podcast</a>
+        <a class="btn btn-primary note text-white" data-toggle="modal" data-target=".modal" data-id ="{{this._id}}" data-title="{{this.title}}" data-note="{{this.note}}">Add Note</a>
+        <a class="btn btn-success save text-white" data-id="{{this._id}}">Save Podcast</a>
+    </div>
+</div>
+{{/each}}

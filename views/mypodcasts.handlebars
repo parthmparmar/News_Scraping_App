@@ -1,0 +1,16 @@
+
+{{#unless podcasts.length}}
+<h4 class ="text-warning"> -- No Saved Podcasts to Display</h4>
+{{/unless}}
+
+{{#each podcasts}}
+<div class="card mb-2">
+    <h5 class="card-header">{{this.podcastId.title}}</h5>
+    <div class="card-body">
+        <p class="card-text description">{{this.podcastId.description}}</p>
+        <a href="{{this.podcastId.link}}" class="btn btn-secondary">Link to Podcast</a>
+        <a class="btn btn-primary note text-white" data-toggle="modal" data-target=".modal" data-id ="{{this.podcastId._id}}" data-title="{{this.podcastId.title}}" data-note="{{this.podcastId.note}}">Add Note</a>
+        <a class="btn btn-danger remove text-white" data-id="{{this._id}}">Remove Podcast</a>
+    </div>
+</div>
+{{/each}}

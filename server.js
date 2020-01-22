@@ -27,6 +27,11 @@ app.use(express.json());
 // Make public a static folder
 app.use(express.static("public"));
 
+var exphbs = require("express-handlebars");
+
+app.engine("handlebars", exphbs({ defaultLayout: "main" }));
+app.set("view engine", "handlebars");
+
 // Connect to the Mongo DB
 mongoose.connect("mongodb://localhost/homework18Podcast", { useNewUrlParser: true });
 
@@ -44,7 +49,6 @@ app.get("/find", function(req, res){
   // });
   axios.get("https://www.npr.org/sections/money/").then(function(response) {
   var $ = cheerio.load(response.data);
-  var podcastsArray = [];
   $("article.item").each(function(i, element) {
 
     var title = $(element).find(".title").text();
@@ -58,44 +62,20 @@ app.get("/find", function(req, res){
       link: link,
       imageLink: imageLink
     };
-    podcastsArray.push(result);
-    console.log(result);
-    // db.Podcast.findOne({title: title}).then(function(results){
-    //   if(results == null){
-    //     // console.log(result);
-    //     db.Podcast.create(result)
-    //     .then(function(dbPodcast){
-    //       // console.log(dbPodcast);
-    //     }).catch(function(err){
-    //       console.log(err);
-    //     });
-    //   };
-    // });
+        
+    db.Podcast.create(result)
+    .then(function(dbPodcast){
+    }).catch(function(err){
+      if(err.code != 11000){
+        console.log(err);
+      };
+    });
+
 
   });
-  addDB(podcastsArray);
   res.send("Podcast Found!")
   });
 });
-
-function addDB(array){
-  array.forEach(element => {
-
-    db.Podcast.findOne({title: element.title}).then(function(results){
-      if(results == null){
-        // console.log(result);
-        db.Podcast.create(result)
-        .then(function(dbPodcast){
-          // console.log(dbPodcast);
-        }).catch(function(err){
-          console.log(err);
-        });
-      };
-    }).catch(function(err){
-      console.log(err);
-    });
-  });
-}
 
 // All Podcast Route
 app.get("/podcasts", function(req, res){
@@ -165,7 +145,7 @@ app.post("/remove/:id", function(req, res){
   var id = req.params.id;
 
   db.Saved.findByIdAndDelete(id).then(function(results){
-    console.log(results);
+    res.send(results);
   }).catch(function(err){
     console.log("err");
   });
@@ -187,6 +167,21 @@ app.get("/notes", function(req, res){
   });
 });
 
+app.get("/home", function(req, res){
+  db.Podcast.find({}).then(function(dbPodcasts){
+    res.render("index", {podcasts: dbPodcasts});
+  }).catch(function(err){
+    console.log(err);
+  });
+});
+
+app.get("/mypodcasts", function(req, res){
+  db.Saved.find({}).populate("podcastId").then(function(dbSaved){
+    res.render("mypodcasts", {podcasts: dbSaved});
+    }).catch(function(err){
+      console.log(err);
+    });
+});
 
 // Listen on port 3000
 app.listen(3000, function() {

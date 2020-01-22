@@ -121,7 +121,6 @@ $(".remove").on("click", function(){
         url:"/remove/" + id,
         type: "POST"
     }).then(function(response){
-        console.log(response);
         location.reload();
     });
 });
