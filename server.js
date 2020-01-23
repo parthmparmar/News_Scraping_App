@@ -40,11 +40,6 @@ mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
 
 // Routes
 
-// Home
-app.get("/hello-world", function(req, res) {
-  res.send("Hello world");
-});
-
 // Scrap Route
 app.get("/find", function(req, res){
 
