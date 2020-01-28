@@ -5,7 +5,25 @@ $(document).ready(function(){
         $("#home").removeClass("active");
         $("#mypodcasts").addClass("active");
     };
-
+    $.ajax({
+        url :"/saved",
+        type: "GET"
+    }).then(function(response){
+        $(".save").each(function(){
+            var id = $(this).data("id")
+            var found = false;
+            for (var i = 0; i < response.length; i++){
+                if (id == response[i].podcastId._id){
+                    found = true;
+                    break;
+                };
+            };
+            if (found){
+                $(this).addClass("d-none");
+            };
+            
+        });
+    });
 });
 
 $(".scrap").on("click", function(){
